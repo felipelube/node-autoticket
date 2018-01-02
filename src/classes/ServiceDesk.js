@@ -27,7 +27,7 @@ function ServiceDesk(visible = true) {
       .build();
   } else { // invisível, PhantomJS
     this.driver = new webdriver.Builder()
-      .forBrowser('PhantomJS')
+      .forBrowser('phantomjs')
       .build();
   }
 }
@@ -58,11 +58,29 @@ ServiceDesk.prototype = {
     }
   },
   /**
+   * Espera um elemento ser defindo e renderizado na página para retorná-lo.
+   * @param {any} locator o localizador do elemento
+   */
+  async getElementVisible(locator) {
+    try {
+      await this.driver.wait(until.elementLocated(locator));
+      const whatElement = await this.driver.findElement(locator);
+      await this.driver.wait(until.elementIsVisible(whatElement), 5000);
+      return whatElement;
+    } catch(e) {
+      throw new Error(`Falha ao tentar pegar o elemento: ${e.message}`);
+    }
+  },
+
+  /**
    * Função de conveniência para navegar para um frame pelo atributo nome
    * @param {any} locator o localizador do elemento
    */
-  async navigateToFrame(frameName) {
+  async navigateToFrame(frameName, awaitVisible = false) {
     try {
+      if (awaitVisible) {
+        await this.getElementVisible(By.name(frameName));
+      }
       await this.driver.wait(until.ableToSwitchToFrame(By.name(frameName)), 5000);
     } catch (e) {
       throw new Error(`Falha ao tentar navegar para o frame: ${frameName}`);
@@ -88,14 +106,11 @@ ServiceDesk.prototype = {
       await this.driver.findElement(By.id('PIN')).sendKeys(password); // envie a senha
       await this.elementClick(By.id('imgBtn0')); //clique no botão para entrar
 
-      await this.driver.sleep(5000); // espere a página carregar
-
-      await this.navigateToFrame("welcome_banner");
-      const welcomeBannerLink = this.driver.findElement(
+      await this.navigateToFrame("welcome_banner", true);
+      const welcomeBannerLink = await this.getElementVisible(
         By.css('td.welcome_banner_login_info > span.welcomebannerlink')
       );
       const userFullName = await welcomeBannerLink.getAttribute('title'); // extraia o nome completo do usuário
-
       // atualize a lista de janelas com esta principal
       await this.updateWindowHandles();
       // atualize os atributos
