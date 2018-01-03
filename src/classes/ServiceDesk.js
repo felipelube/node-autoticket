@@ -1,7 +1,7 @@
 const webdriver = require('selenium-webdriver'),
   By = webdriver.By,
   until = webdriver.until;
-
+const { Ticket } = require("./Ticket");
 const { SERVICE_DESK_URL } = require('../config');
 
 /**
@@ -63,7 +63,7 @@ ServiceDesk.prototype = {
    */
   async getElementVisible(locator) {
     try {
-      await this.driver.wait(until.elementLocated(locator));
+      await this.driver.wait(until.elementLocated(locator), 5000);
       const whatElement = await this.driver.findElement(locator);
       await this.driver.wait(until.elementIsVisible(whatElement), 5000);
       return whatElement;
@@ -154,11 +154,22 @@ ServiceDesk.prototype = {
 
       // pegue o handle da janela de nova solicitação
       const newTicketWindowHandle = this.windowHandles[this.windowHandles.length -1];
-
-      console.log(`nova janela de Solicitação: ${newTicketWindowHandle}`);
-
+      const newTicket = new Ticket(this, newTicketWindowHandle);
+      return newTicket;
     } catch(e) {
       throw new Error(`Falha ao tentar criar uma Janela de Solicitação: ${e.message}`);
+    }
+  },
+  /**
+   * Dado o índice do ticket no vetor de tickets, navega para a janela associada a ele.
+   * @param {Number} ticketIndex o índice do ticket no vetor de tickets
+   */
+  async navigateToTicket(ticketIndex = 0) {
+    try {
+      await this.driver.switchTo().window(this.tickets[ticketIndex].window);
+      return this.tickets[ticketIndex];
+    } catch (e) {
+      throw new Error(`Falha ao navegar para ticket com índice ${ticketIndex}: ${e.message}`);
     }
   }
 };
