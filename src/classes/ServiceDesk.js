@@ -76,7 +76,7 @@ ServiceDesk.prototype = {
    * Função de conveniência para navegar para um frame pelo atributo nome
    * @param {any} locator o localizador do elemento
    */
-  async navigateToFrame(frameName, awaitVisible = false) {
+  async navigateToFrame(frameName, awaitVisible = true) {
     try {
       if (awaitVisible) {
         await this.getElementVisible(By.name(frameName));
@@ -106,7 +106,7 @@ ServiceDesk.prototype = {
       await this.driver.findElement(By.id('PIN')).sendKeys(password); // envie a senha
       await this.elementClick(By.id('imgBtn0')); //clique no botão para entrar
 
-      await this.navigateToFrame("welcome_banner", true);
+      await this.navigateToFrame("welcome_banner");
       const welcomeBannerLink = await this.getElementVisible(
         By.css('td.welcome_banner_login_info > span.welcomebannerlink')
       );
@@ -155,6 +155,8 @@ ServiceDesk.prototype = {
       // pegue o handle da janela de nova solicitação
       const newTicketWindowHandle = this.windowHandles[this.windowHandles.length -1];
       const newTicket = new Ticket(this, newTicketWindowHandle);
+      // insira o novo ticket na lista de tickets
+      this.tickets.push(newTicket);
       return newTicket;
     } catch(e) {
       throw new Error(`Falha ao tentar criar uma Janela de Solicitação: ${e.message}`);

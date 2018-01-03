@@ -4,7 +4,7 @@ const { username, password } = require("../src/config");
 
 
 
-describe('Funcionalidades de ServiceDesk (browser visível)', () => {
+describe('Basic features with visible browser', () => {
   let desk;
   before(() => {
     desk = new ServiceDesk();
@@ -14,13 +14,23 @@ describe('Funcionalidades de ServiceDesk (browser visível)', () => {
     desk.destroy();
   });
 
-  it('deve criar um sessão de ServiceDesk com browser visível', (done) => {
-    assert(desk instanceof ServiceDesk, 'Não é uma instância válida');
+  it('should create a instance of ServiceDesk', (done) => {
+    assert(desk instanceof ServiceDesk, 'Not a valid ServiceDesk instance');
     done();
   });
 
-  it('deve logar corretamente usando um usuário e senhas corretos', async function() {
+  it('should log in with valid user info', async function() {
     await desk.logIn(username, password);
-    assert(desk.userName === username, 'Login gravado na sessão não bate com o fornecido');
+    assert(desk.userName === username, 'ServiceDesk: got user login that does not match with the used to log in');
+  });
+
+  it('should create a new ticket order', async function() {
+    if (!desk.loggedIn) {
+      await desk.logIn(username, password);
+    }
+    const ticket = await desk.createTicketWindow();
+    const ticketNumber = await ticket.getNumber();
+    assert(desk.tickets.length > 0, 'ServiceDesk: ticket list remains the same');
+    assert(ticketNumber != null, 'Ticket: could not determinate the ticket number');
   });
 });
