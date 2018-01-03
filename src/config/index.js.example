@@ -1,0 +1,5 @@
+module.exports = {
+  SERVICE_DESK_URL: '<system url>',
+  username: '<user login>',
+  password: '<user password>',
+};
