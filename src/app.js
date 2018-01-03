@@ -1,5 +1,5 @@
 const { ServiceDesk } = require('./classes/ServiceDesk');
-const { username, password } = require("./config/secrets");
+const { username, password } = require("./config");
 
 /**
  * @todo mover para testes

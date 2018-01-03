@@ -1,6 +1,6 @@
 const assert = require("assert");
 const { ServiceDesk } = require("../src/classes/ServiceDesk");
-const { username, password } = require("../src/config/secrets");
+const { username, password } = require("../src/config");
 
 
 
