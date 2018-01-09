@@ -2,7 +2,8 @@ const { ServiceDesk } = require('./classes/ServiceDesk');
 const { username, password } = require("./config");
 
 /**
- * @todo mover para testes
+ * @todo move to tests
+ * @todo more thread-safe use of the driver
  */
 (async () => {
   let desk;

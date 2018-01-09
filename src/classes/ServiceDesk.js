@@ -4,6 +4,8 @@ const webdriver = require('selenium-webdriver'),
 const { Ticket } = require("./Ticket");
 const { SERVICE_DESK_URL } = require('../config');
 
+const TIMEOUT = 10 * 1000;
+
 /**
  * Construtor para a 'classe' ServiceDesk
  * @param {Boolean} visible se a sessão deve ser criada num navegador visível
@@ -63,9 +65,9 @@ ServiceDesk.prototype = {
    */
   async getElementVisible(locator) {
     try {
-      await this.driver.wait(until.elementLocated(locator), 5000);
-      const whatElement = await this.driver.findElement(locator);
-      await this.driver.wait(until.elementIsVisible(whatElement), 5000);
+      await this.driver.wait(until.elementLocated(locator), TIMEOUT);
+      const whatElement = await this.driver.wait(this.driver.findElement(locator));
+      await this.driver.wait(until.elementIsVisible(whatElement), TIMEOUT);
       return whatElement;
     } catch(e) {
       throw new Error(`Falha ao tentar pegar o elemento: ${e.message}`);
@@ -81,7 +83,7 @@ ServiceDesk.prototype = {
       if (awaitVisible) {
         await this.getElementVisible(By.name(frameName));
       }
-      await this.driver.wait(until.ableToSwitchToFrame(By.name(frameName)), 5000);
+      await this.driver.wait(until.ableToSwitchToFrame(By.name(frameName)), TIMEOUT);
     } catch (e) {
       throw new Error(`Falha ao tentar navegar para o frame: ${frameName}`);
     }
@@ -172,6 +174,23 @@ ServiceDesk.prototype = {
       return this.tickets[ticketIndex];
     } catch (e) {
       throw new Error(`Falha ao navegar para ticket com índice ${ticketIndex}: ${e.message}`);
+    }
+  },
+
+  async setElementValue(id, value) {
+    try {
+      const script = `document.getElementById('${id}').setAttribute('value', '${value}');`;
+      await this.driver.wait(this.driver.executeScript(script), TIMEOUT);
+    } catch(e) {
+      throw new Error(`Falha ao tentar definir o valor do elemento ${id}: ${e.message}`);
+    }
+  },
+  async getElementValue(locator) {
+    try {
+      const el = await this.getElementVisible(locator);
+      return await el.getAttribute('value');
+    } catch(e) {
+      throw new Error(`Falha ao tentar obter o valor do elemento: ${e.message}`);
     }
   }
 };
