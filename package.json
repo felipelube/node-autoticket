@@ -4,11 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 15000"
+    "test": "mocha --timeout 15000",
+    "dev": "node src/app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ajv": "^6.0.0",
+    "commander": "^2.12.2",
+    "fs-extra": "^5.0.0",
+    "inquirer": "^5.0.0",
     "selenium-webdriver": "^3.6.0"
   },
   "devDependencies": {
