@@ -1,6 +1,6 @@
 const { ServiceDesk } = require('./classes/ServiceDesk');
 const { username, password } = require("./config");
-const QuestionsController = require('./controllers/questions');
+const QuestionsController = require('./controllers/QuestionsController');
 
 const program = require("commander");
 const inquirer = require("inquirer");
@@ -28,9 +28,9 @@ const doCSVProcessing = async () => {
       let canOpenTicket = true;
       const questionsController = new QuestionsController();
       while (canOpenTicket) {
-        const ticketType = Object.values(await questionsController.getTicketType())[0];
-        const ticketData = await questionsController.getTicketData(ticketType);
-        canOpenTicket = await inquirer.prompt(addAnotherTicketForm());
+        const ticketType = Object.values(await questionsController.askForTicketType())[0];
+        const ticketData = await questionsController.askForTicketData(ticketType);
+        canOpenTicket = await questionsController.askForAnotherTicket();
       }
     }
   }

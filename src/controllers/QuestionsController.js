@@ -37,7 +37,7 @@ QuestionsController.prototype = {
   /**
    * Prompt the user wich ticket type to open.
    */
-  getTicketType() {
+  askForTicketType() {
     return inquirer.prompt({
       name: 'ticketTypeQuestion',
       type: 'list',
@@ -45,10 +45,27 @@ QuestionsController.prototype = {
       message: "Qual SA você quer abrir agora?",
     });
   },
+  askForAnotherTicket() {
+    return inquirer.prompt({
+      name: 'anotherTicketQuestion',
+      type: 'list',
+      choices: [
+        {
+          name: 'Yes',
+          value: true,
+        },
+        {
+          name: 'No',
+          value: false,
+        }
+      ],
+      message: 'Deseja adicionar mais uma SA?'
+    })
+  },
   /**
-   * Based on a ticket type, prompt the user the questions to get a ticket information.
+   * Based on a ticket type, prompt the user the questions for ticket information.
    */
-  async getTicketData(ticketType) {
+  async askForTicketData(ticketType) {
     const ticketSchema = this.ticketSchemas.find(schema => schema.value === ticketType).schema;
     return inquirer.prompt(new Form(ticketSchema).toInquirerPrompt());
   }

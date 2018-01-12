@@ -34,7 +34,7 @@ const _propertyToQuestion = ( propertyName, property, index, schema ) => {
     let question = {};
     question.name = propertyName;
     question.default = property.default;
-    question.type = _(property);
+    question.type = _determineType(property);
     question.message = property.title;
 
     if (property.type === 'boolean') {
