@@ -51,6 +51,12 @@ const fieldMappings = {
     title: null,
     type: 'simple',
   },
+  tenant: {
+    id: 'df_0_0',
+    name: null,
+    title: null,
+    type: 'select'
+  }
 }
 
 function Ticket(desk, window) {
