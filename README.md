@@ -10,3 +10,6 @@ The goals of this project are:
 - Automatic Ticket creation based on clipboard contents
 
 Please take note: the code is in early stages, so do not expect any functionality.
+
+## Install notes - IE Driver
+Please refer to [InternetExplorerDriver page](https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver) in SeleniumHQ documentation, especially the [Required Configuration section](https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver#required-configuration) to properly install and configure the driver.
