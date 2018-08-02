@@ -1,8 +1,15 @@
-const webdriver = require('selenium-webdriver'),
-  By = webdriver.By,
-  until = webdriver.until;
-const { Ticket } = require("./Ticket");
-const { SERVICE_DESK_URL } = require('../config');
+const webdriver = require('selenium-webdriver');
+
+const {
+  By,
+  until
+} = webdriver;
+const {
+  Ticket
+} = require("./Ticket");
+const {
+  SERVICE_DESK_URL
+} = require('../config');
 
 const TIMEOUT = 10 * 1000;
 
@@ -55,7 +62,7 @@ ServiceDesk.prototype = {
     try {
       const el = await this.driver.findElement(locator);
       await el.click();
-    } catch(e) {
+    } catch (e) {
       throw new Error(`Falha ao tentar clicar em elemento: ${e.message}`);
     }
   },
@@ -69,7 +76,7 @@ ServiceDesk.prototype = {
       const whatElement = await this.driver.wait(this.driver.findElement(locator));
       await this.driver.wait(until.elementIsVisible(whatElement), TIMEOUT);
       return whatElement;
-    } catch(e) {
+    } catch (e) {
       throw new Error(`Falha ao tentar pegar o elemento: ${e.message}`);
     }
   },
@@ -106,7 +113,7 @@ ServiceDesk.prototype = {
       await this.driver.get(SERVICE_DESK_URL) // navegue até a URL do sistema
       await this.driver.findElement(By.id('USERNAME')).sendKeys(username); // envie o nome de usuário
       await this.driver.findElement(By.id('PIN')).sendKeys(password); // envie a senha
-      await this.elementClick(By.id('imgBtn0')); //clique no botão para entrar
+      await this.elementClick(By.id('imgBtn0')); // clique no botão para entrar
 
       await this.navigateToFrame("welcome_banner");
       const welcomeBannerLink = await this.getElementVisible(
@@ -119,7 +126,7 @@ ServiceDesk.prototype = {
       this.realUserName = userFullName;
       this.userName = username;
       this.loggedIn = true;
-    } catch(e) {
+    } catch (e) {
       throw new Error(`Falha ao tentar logar no sistema: ${e.message}`);
     }
   },
@@ -148,19 +155,21 @@ ServiceDesk.prototype = {
       // clique no link de atalho para 'nova solicitação'
       await this.elementClick(By.id('toolbar_1'));
 
-      // aguarde a nova janela ser criada... @todo colocar timout máximo
-      while(handlesCount === this.windowHandles.length) {
+      // aguarde a nova janela ser criada... @todo colocar timeout máximo
+      /* eslint-disable no-await-in-loop */
+      while (handlesCount === this.windowHandles.length) {
         await this.driver.sleep(100);
         await this.updateWindowHandles(); // atualize a lista de janelas
       }
+      /* eslint-enable no-await-in-loop */
 
       // pegue o handle da janela de nova solicitação
-      const newTicketWindowHandle = this.windowHandles[this.windowHandles.length -1];
+      const newTicketWindowHandle = this.windowHandles[this.windowHandles.length - 1];
       const newTicket = new Ticket(this, newTicketWindowHandle);
       // insira o novo ticket na lista de tickets
       this.tickets.push(newTicket);
       return newTicket;
-    } catch(e) {
+    } catch (e) {
       throw new Error(`Falha ao tentar criar uma Janela de Solicitação: ${e.message}`);
     }
   },
@@ -181,7 +190,7 @@ ServiceDesk.prototype = {
     try {
       const script = `document.getElementById('${id}').setAttribute('value', '${value}');`;
       await this.driver.wait(this.driver.executeScript(script), TIMEOUT);
-    } catch(e) {
+    } catch (e) {
       throw new Error(`Falha ao tentar definir o valor do elemento ${id}: ${e.message}`);
     }
   },
@@ -189,7 +198,7 @@ ServiceDesk.prototype = {
     try {
       const el = await this.getElementVisible(locator);
       return await el.getAttribute('value');
-    } catch(e) {
+    } catch (e) {
       throw new Error(`Falha ao tentar obter o valor do elemento: ${e.message}`);
     }
   }

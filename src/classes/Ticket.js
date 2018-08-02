@@ -1,4 +1,6 @@
-const By = require('selenium-webdriver').By;
+const {
+  By
+} = require('selenium-webdriver');
 
 const fieldMappings = {
   requester: {
@@ -93,12 +95,16 @@ Ticket.prototype = {
   async setAll(data) {
     try {
       await this.switchToSelfWindow();
-      for(let [key, opts] of Object.entries(fieldMappings)) {
+      /* eslint-disable no-restricted-syntax  */
+      /* eslint-disable no-await-in-loop */
+      for (const [key, opts] of Object.entries(fieldMappings)) {
         const value = data[key];
         if (value && opts.type === 'simple') {
-          await this.desk.setElementValue( opts.id , value);
+          await this.desk.setElementValue(opts.id, value);
         }
       }
+      /* eslint-enable no-await-in-loop no-restricted-syntax */
+      /* eslint-enable no-restricted-syntax  */
     } catch (e) {
       throw new Error(`Falha ao tentar definir os campos da SA: ${e.message}`)
     }

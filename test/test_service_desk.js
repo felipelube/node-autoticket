@@ -1,8 +1,24 @@
+require("dotenv").config();
 const assert = require("assert");
-const { ServiceDesk } = require("../src/classes/ServiceDesk");
-const { fieldMappings } = require("../src/classes/Ticket");
-const { username, password } = require("../src/config");
-const By = require('selenium-webdriver').By;
+const {
+  describe,
+  it,
+  before,
+  after,
+} = require("mocha");
+const {
+  By
+} = require('selenium-webdriver');
+const {
+  ServiceDesk
+} = require("../src/classes/ServiceDesk");
+const {
+  fieldMappings
+} = require("../src/classes/Ticket");
+const {
+  username,
+  password
+} = require("../src/config");
 
 const testDataForTicket = {
   requester: 'John Doe',
@@ -24,20 +40,18 @@ describe('Basic features with visible browser', () => {
     desk.destroy();
   });
 
-  const assertElementValue = async(locator, value) => await desk.getElementValue(locator) === value;
-
   it('should create a instance of ServiceDesk', (done) => {
     assert(desk instanceof ServiceDesk, 'Not a valid ServiceDesk instance');
     done();
   });
 
-  it('should log in with valid user info', async function() {
+  it('should log in with valid user info', async () => {
     await desk.logIn(username, password);
     assert(desk.userName === username,
       'ServiceDesk: got user login that does not match with the used to log in');
   });
 
-  it('should create a new ticket order', async function() {
+  it('should create a new ticket order', async () => {
     if (!desk.loggedIn) {
       await desk.logIn(username, password);
     }
@@ -47,7 +61,7 @@ describe('Basic features with visible browser', () => {
     assert(ticketNumber != null, 'Ticket: could not determinate the ticket number');
   });
 
-  it('should populate SA fields according to data object', async function() {
+  it('should populate SA fields according to data object', async () => {
     if (!desk.loggedIn) {
       await desk.logIn(username, password);
     }
@@ -55,14 +69,17 @@ describe('Basic features with visible browser', () => {
       ticket = await desk.createTicketWindow(); /** @var Ticket */
     }
     await ticket.setAll(testDataForTicket);
-
-    for(let [key, opts] of Object.entries(fieldMappings)) {
+    /* eslint-disable no-restricted-syntax  */
+    /* eslint-disable no-await-in-loop */
+    for (const [key, opts] of Object.entries(fieldMappings)) {
       const value = testDataForTicket[key];
       if (value && opts.type === 'simple') {
-        const verifiedValue = await desk.getElementValue( By.id(opts.id) );
+        const verifiedValue = await desk.getElementValue(By.id(opts.id));
         assert(value === verifiedValue,
           `Value of HTML field for ${key} does not match expected value '${value}'`);
       }
     }
+    /* eslint-enable no-await-in-loop no-restricted-syntax */
+    /* eslint-enable no-restricted-syntax  */
   });
 });

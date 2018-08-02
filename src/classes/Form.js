@@ -1,4 +1,3 @@
-const Ajv = require('ajv');
 const formats = require('ajv/lib/compile/formats')();
 
 function Form(schema, intro = '') {
@@ -9,15 +8,15 @@ function Form(schema, intro = '') {
 /**
  * Based on a JSON Schema property, determine the type of the inquirer prompt.
  */
-const _determineType = (property) => {
-  if ((typeof(property.type) !== 'string')){
+const determineType = (property) => {
+  if ((typeof (property.type) !== 'string')) {
     throw new Error('Compound types not supported yet.')
   } else {
     if (property.enum || property.type === 'boolean') {
       return 'list';
-    } else {
-      return 'input';
     }
+    return 'input';
+
   }
 }
 
@@ -25,21 +24,20 @@ const _determineType = (property) => {
  * Get the Ticket's internal type and human name for display in a choice, setting its name and value
  * properties
  */
-const _getTicketTypes = (enumArray) => {
-  return enumArray; /** @todo implement */
-}
+const getTicketTypes = (enumArray) =>
+  enumArray /** @todo implement */
 
-const _propertyToQuestion = ( propertyName, property, index, schema ) => {
+
+const propertyToQuestion = (propertyName, property, index, schema) => {
   try {
-    let question = {};
+    const question = {};
     question.name = propertyName;
     question.default = property.default;
-    question.type = _determineType(property);
+    question.type = determineType(property);
     question.message = property.title;
 
     if (property.type === 'boolean') {
-      question.choices = [
-        {
+      question.choices = [{
           name: 'Yes',
           value: true,
         },
@@ -49,7 +47,7 @@ const _propertyToQuestion = ( propertyName, property, index, schema ) => {
         }
       ];
     } else {
-      question.choices = _getTicketTypes(property.enum);
+      question.choices = getTicketTypes(property.enum);
     }
 
     question.validate = (input) => {
@@ -58,14 +56,13 @@ const _propertyToQuestion = ( propertyName, property, index, schema ) => {
         return false;
       }
       // if this property has a 'format' defined, use Ajv's formats to validate the input
-      if (formats.hasOwnProperty(property.format)) {
+      if (Object.prototype.hasOwnProperty.call(formats, property.format)) {
         return formats[property.format].test(input);
       }
-      return true; //retorn true for all other cases
+      return true; // retorn true for all other cases
     }
     return question;
-  }
-  catch (e) {
+  } catch (e) {
     throw new Error(`Cannot create a inquirer prompt object for question: ${e}`)
   }
 };
@@ -76,9 +73,7 @@ Form.prototype = {
    * Transform a JSON Schema for a ticket type into a Inquirer.js prompt session.
    */
   toInquirerPrompt() {
-    return Object.entries(this.schema.properties).map( ( [ propertyName, property ], index ) => {
-      return _propertyToQuestion(propertyName, property, index, this.schema);
-    });
+    return Object.entries(this.schema.properties).map(([propertyName, property], index) => propertyToQuestion(propertyName, property, index, this.schema));
   },
 }
 

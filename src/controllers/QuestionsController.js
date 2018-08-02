@@ -1,7 +1,9 @@
 const fs = require("fs-extra");
-const Form = require('../classes/Form');
-const ticketTypeSchema = require('../schemas/questions/saType.json');
 const inquirer = require("inquirer");
+const Form = require('../classes/Form');
+const {
+  ticketSchemasDir
+} = require("../config");
 
 function QuestionsController() {
   /**
@@ -10,20 +12,18 @@ function QuestionsController() {
    */
   const readTicketSchemas = () => {
     try {
-      const ticketSchemas = [];
-      const questionsDir = './src/schemas/tickets';
-      const fileList = fs.readdirSync(questionsDir);
-      for (fileName of fileList) { /** Array.reduce */
-        const schema = fs.readJSONSync(`${questionsDir}/${fileName}`);
-        const ticketType = /.*\/(.*)\.json$/.exec(schema['$id'])[1];
+      const fileList = fs.readdirSync(ticketSchemasDir);
+      const ticketSchemas = fileList.map(fileName => {
+        const schema = fs.readJSONSync(`${ticketSchemasDir}/${fileName}`);
+        const ticketType = /.*\/(.*)\.json$/.exec(schema.$id)[1];
 
         const schemaEntry = {
           name: schema.title,
           value: ticketType,
           schema,
         }
-        ticketSchemas.push(schemaEntry);
-      }
+        return schemaEntry;
+      });
       return ticketSchemas;
     } catch (e) {
       throw new Error(`Failed to read the schemas: ${e}`);
@@ -49,8 +49,7 @@ QuestionsController.prototype = {
     return inquirer.prompt({
       name: 'anotherTicketQuestion',
       type: 'list',
-      choices: [
-        {
+      choices: [{
           name: 'Yes',
           value: true,
         },
