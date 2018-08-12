@@ -1,0 +1,18 @@
+Folhas {
+  Exp
+  = (empresa)+
+  empresa
+  = cabecalho lineTerminator responsavel lineTerminator categoria lineTerminator resumo lineTerminator descricao
+  lineTerminator
+  = "\n" | "\r" | "\u2028" | "\u2029"
+  categoria
+  = caseInsensitive<"Categoria: "> (~lineTerminator any)*
+  responsavel
+  = caseInsensitive<"Responsável: "> (~lineTerminator any)*
+  resumo
+  = caseInsensitive<"resumo: "> (~lineTerminator any)*
+  descricao
+  = caseInsensitive<"DESCRIÇÃO: "> (~empresa any)*
+  cabecalho
+  = "EMPRESA" space (digit)* "("letter*"):"
+}

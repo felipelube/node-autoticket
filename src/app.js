@@ -2,6 +2,7 @@ require("dotenv").config(); // load the env vars from .envfile
 
 const program = require("commander");
 const QuestionsController = require('./controllers/QuestionsController');
+const GrammarFileParserController = require('./controllers/GrammarFileParserController');
 
 
 /**
@@ -10,6 +11,7 @@ const QuestionsController = require('./controllers/QuestionsController');
 program
   .version('1.0.0')
   .option('-C, --csv', 'Open a CSV file for batch processing')
+  .option('-G, --grammar-processing [file]', 'Parse the specified file using the built-in grammars')
   .parse(process.argv);
 
 const doCSVProcessing = async () => {
@@ -28,12 +30,21 @@ const processTickets = async () => {
   throw new Error('Not implemented yet!');
 }
 
-(async (csv = false) => {
+(async ({
+  csv,
+  grammarProcessing
+}) => {
   let desk;
   try {
     const tickets = [];
     if (csv) {
       const ticketsToOpen = await doCSVProcessing();
+      await showTicketsSummary(ticketsToOpen);
+      const results = await processTickets(ticketsToOpen);
+      await showProcessingSummary(results);
+    } else if (grammarProcessing) {
+      const grammarProcessingController = new GrammarFileParserController();
+      const ticketsToOpen = grammarProcessingController.parse(grammarProcessing);
       await showTicketsSummary(ticketsToOpen);
       const results = await processTickets(ticketsToOpen);
       await showProcessingSummary(results);
@@ -59,4 +70,4 @@ const processTickets = async () => {
       desk.destroy();
     }
   }
-})();
+})(program);

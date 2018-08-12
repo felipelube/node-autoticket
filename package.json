@@ -16,6 +16,7 @@
     "dotenv": "^6.0.0",
     "fs-extra": "^5.0.0",
     "inquirer": "^5.0.0",
+    "ohm-js": "^0.14.0",
     "selenium-webdriver": "^3.6.0"
   },
   "devDependencies": {
