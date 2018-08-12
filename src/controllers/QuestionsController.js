@@ -1,5 +1,8 @@
 const fs = require("fs-extra");
 const inquirer = require("inquirer");
+const {
+  resolve
+} = require("path");
 const Form = require('../classes/Form');
 const {
   ticketSchemasDir
@@ -14,7 +17,7 @@ function QuestionsController() {
     try {
       const fileList = fs.readdirSync(ticketSchemasDir);
       const ticketSchemas = fileList.map(fileName => {
-        const schema = fs.readJSONSync(`${ticketSchemasDir}/${fileName}`);
+        const schema = fs.readJSONSync(resolve(ticketSchemasDir, fileName));
         const ticketType = /.*\/(.*)\.json$/.exec(schema.$id)[1];
 
         const schemaEntry = {
