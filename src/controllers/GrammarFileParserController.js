@@ -50,29 +50,30 @@ function GrammarFileParserController() {
 
 GrammarFileParserController.prototype = {
   constructor: GrammarFileParserController,
-  parse(file) {
+  parse(fileName) {
     try {
-      const fileContents = fs.readFileSync(file);
-      const matchedByGrammars = this.grammarsWithSemantics.reduce((matched, grammar) => {
-        const matchedByGrammar = grammar.match(fileContents)
-        if (matchedByGrammar.succeeded()) {
-          matched.push(grammar.semantics(matchedByGrammar).toSA());
-        }
-        return matched;
-      }, [])
-      if (!matchedByGrammars.length) {
-        throw new Error(`No grammar matched this input. Tried ${this.grammarsWithSemantics.length} grammars.`)
-      } else if (matchedByGrammars.length > 1) {
-        console.log('WARNING: more than one grammar was successfully matched for this input. Using only the first'); // eslint-disable-line no-console
+      if (!fileName) {
+        throw new Error("You must specify a file for processing");
       }
-      return matchedByGrammars[0];
-    } catch (e) {
-      throw new Error(`Failed to parse the file using built-in NLP grammars: ${e.message}`)
-    }
-  }
-};
-
-module.exports = GrammarFileParserController;
+      if (!fs.exists(fileName)) {
+        throw new Error(`The file specified was not found: ${fileName}`);
+      }
+      const fileContents = fs.readFileSync(fileName);
+      const matchedByGrammars = this.grammarsWithSemantics.reduce(
+        (matched, grammar) => {
+          const matchedByGrammar = grammar.match(fileContents);
+          if (matchedByGrammar.succeeded()) {
+            matched.push(grammar.semantics(matchedByGrammar).toSA());
+          }
+          return matched;
+        },
+        []
+      );
+      if (!matchedByGrammars.length) {
+        throw new Error(
+          `No grammar matched this input. Tried ${
+            this.grammarsWithSemantics.length
+          } grammars.`
         );
       } else if (matchedByGrammars.length > 1) {
         console.log(
