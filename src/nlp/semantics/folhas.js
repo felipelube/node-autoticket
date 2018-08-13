@@ -1,5 +1,5 @@
-module.exports = grammar => grammar.createSemantics()
-  .addOperation('toSA', {
+module.exports = grammar =>
+  grammar.createSemantics().addOperation("toSA", {
     Exp(e) {
       return e.toSA();
     },
@@ -9,14 +9,16 @@ module.exports = grammar => grammar.createSemantics()
         affectedUser: resp.toSA(),
         category: cate.toSA(),
         summary: resu.toSA(),
-        description: desc.toSA(),
-      }
+        description: desc.toSA()
+      };
     },
-    cabecalho(textoFixo, espaco, numero, parem1, nome, parem2) { // eslint-disable-line no-unused-vars
+    /* eslint-disable no-unused-vars */
+    cabecalho(textoFixo, espaco, numero, parem1, nome, parem2) {
+      /* eslint-enable */
       return {
         empresa: nome.toSA().join(""),
-        numero: parseInt(numero.toSA().join(""), 10),
-      }
+        numero: parseInt(numero.toSA().join(""), 10)
+      };
     },
     responsavel(textoFixo, value) {
       return value.toSA().join("");

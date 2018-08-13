@@ -7,16 +7,11 @@
     "saType": {
       "$id": "/properties/saType",
       "type": "string",
-      "enum": [
-        "email_reset",
-        "email_creation"
-      ],
+      "enum": ["email_reset", "email_creation"],
       "title": "Qual SA você quer abrir agora?",
       "description": "An explanation about the purpose of this instance.",
       "default": "",
-      "examples": [
-        "Qual SA você gostaria de solicitar agora?"
-      ]
+      "examples": ["Qual SA você gostaria de solicitar agora?"]
     }
   }
 }

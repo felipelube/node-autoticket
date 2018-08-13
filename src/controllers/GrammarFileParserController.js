@@ -1,13 +1,8 @@
 const ohm = require("ohm-js");
 const fs = require("fs-extra");
-const {
-  resolve
-} = require("path");
+const { resolve } = require("path");
 
-const {
-  nlpSemanticsDir,
-  nlpGrammarsDir
-} = require("../config");
+const { nlpSemanticsDir, nlpGrammarsDir } = require("../config");
 
 function GrammarFileParserController() {
   /**
@@ -46,7 +41,11 @@ function GrammarFileParserController() {
     throw new Error("No grammars were found");
   }
   const grammarNames = this.grammarsWithSemantics.map(grammar => grammar.name);
-  console.log(`Loaded ${this.grammarsWithSemantics.length} grammars: ${grammarNames.join(", ")}`); // eslint-disable-line no-console
+  console.log(
+    `Loaded ${this.grammarsWithSemantics.length} grammars: ${grammarNames.join(
+      ", "
+    )}`
+  );
 }
 
 GrammarFileParserController.prototype = {
@@ -69,6 +68,22 @@ GrammarFileParserController.prototype = {
       return matchedByGrammars[0];
     } catch (e) {
       throw new Error(`Failed to parse the file using built-in NLP grammars: ${e.message}`)
+    }
+  }
+};
+
+module.exports = GrammarFileParserController;
+        );
+      } else if (matchedByGrammars.length > 1) {
+        console.log(
+          "WARNING: more than one grammar was successfully matched for this input. Using only the first"
+        );
+      }
+      return matchedByGrammars[0];
+    } catch (e) {
+      throw new Error(
+        `Failed to parse the file using built-in NLP grammars: ${e.message}`
+      );
     }
   }
 };

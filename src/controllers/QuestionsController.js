@@ -1,12 +1,8 @@
 const fs = require("fs-extra");
 const inquirer = require("inquirer");
-const {
-  resolve
-} = require("path");
-const Form = require('../classes/Form');
-const {
-  ticketSchemasDir
-} = require("../config");
+const { resolve } = require("path");
+const Form = require("../classes/Form");
+const { ticketSchemasDir } = require("../config");
 
 function QuestionsController() {
   /**
@@ -23,15 +19,15 @@ function QuestionsController() {
         const schemaEntry = {
           name: schema.title,
           value: ticketType,
-          schema,
-        }
+          schema
+        };
         return schemaEntry;
       });
       return ticketSchemas;
     } catch (e) {
       throw new Error(`Failed to read the schemas: ${e}`);
     }
-  }
+  };
   this.ticketSchemas = readTicketSchemas();
 }
 
@@ -42,10 +38,10 @@ QuestionsController.prototype = {
    */
   askForTicketType() {
     return inquirer.prompt({
-      name: 'ticketTypeQuestion',
-      type: 'list',
+      name: "ticketTypeQuestion",
+      type: "list",
       choices: this.ticketSchemas,
-      message: "Qual SA você quer abrir agora?",
+      message: "Qual SA você quer abrir agora?"
     });
   },
   askForAnotherTicket() {
@@ -68,7 +64,22 @@ QuestionsController.prototype = {
    * Based on a ticket type, prompt the user the questions for ticket information.
    */
   async askForTicketData(ticketType) {
-    const ticketSchema = this.ticketSchemas.find(schema => schema.value === ticketType).schema;
+    const ticketSchema = this.ticketSchemas.find(
+      schema => schema.value === ticketType
+    ).schema;
+    return inquirer.prompt(new Form(ticketSchema).toInquirerPrompt());
+  }
+};
+
+module.exports = QuestionsController;
+  },
+  /**
+   * Based on a ticket type, prompt the user the questions for ticket information.
+   */
+  async askForTicketData(ticketType) {
+    const ticketSchema = this.ticketSchemas.find(
+      schema => schema.value === ticketType
+    ).schema;
     return inquirer.prompt(new Form(ticketSchema).toInquirerPrompt());
   }
 };

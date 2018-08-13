@@ -1,63 +1,61 @@
-const {
-  By
-} = require('selenium-webdriver');
+const { By } = require("selenium-webdriver");
 
 const fieldMappings = {
   requester: {
-    id: 'df_0_1',
+    id: "df_0_1",
     name: null,
     title: null,
-    type: 'simple',
+    type: "simple"
   },
   affectedUser: {
-    id: 'df_0_2',
+    id: "df_0_2",
     name: null,
     title: null,
-    type: 'simple',
+    type: "simple"
   },
   category: {
-    id: 'df_0_3',
+    id: "df_0_3",
     name: null,
     title: null,
-    type: 'simple',
+    type: "simple"
   },
   status: {
-    id: 'df_0_4',
+    id: "df_0_4",
     name: null,
     title: null,
-    type: 'simple',
+    type: "simple"
   },
   assignee: {
-    id: 'df_1_1',
+    id: "df_1_1",
     name: null,
     title: null,
-    type: 'simple',
+    type: "simple"
   },
   group: {
-    id: 'df_1_2',
+    id: "df_1_2",
     name: null,
     title: null,
-    type: 'simple',
+    type: "simple"
   },
   summary: {
-    id: 'df_5_0',
+    id: "df_5_0",
     name: null,
     title: null,
-    type: 'simple',
+    type: "simple"
   },
   description: {
-    id: 'df_6_0',
+    id: "df_6_0",
     name: null,
     title: null,
-    type: 'simple',
+    type: "simple"
   },
   tenant: {
-    id: 'df_0_0',
+    id: "df_0_0",
     name: null,
     title: null,
-    type: 'select'
+    type: "select"
   }
-}
+};
 
 function Ticket(desk, window) {
   this.desk = desk; // ponteiro para a sessão que criou este ticket
@@ -72,9 +70,9 @@ Ticket.prototype = {
   async switchToSelfWindow() {
     try {
       await this.driver.switchTo().window(this.window);
-      await this.desk.navigateToFrame('cai_main');
+      await this.desk.navigateToFrame("cai_main");
     } catch (e) {
-      throw new Error(`Falha ao tentar ir para a janela da SA: ${e.message}`)
+      throw new Error(`Falha ao tentar ir para a janela da SA: ${e.message}`);
     }
   },
 
@@ -88,14 +86,14 @@ Ticket.prototype = {
     try {
       await this.switchToSelfWindow();
       const element = await this.desk.getElementVisible(
-        By.css('center > div > table > tbody > tr > td > h2')
+        By.css("center > div > table > tbody > tr > td > h2")
       );
       const elementText = await element.getText();
       const ticketNumber = /.* ([0-9]+)$/.exec(elementText)[1];
       this.number = ticketNumber;
       return this.number;
     } catch (e) {
-      throw new Error(`Falha ao tentar pegar o número do Ticket: ${e.message}`)
+      throw new Error(`Falha ao tentar pegar o número do Ticket: ${e.message}`);
     }
   },
   async setAll(data) {
@@ -105,19 +103,19 @@ Ticket.prototype = {
       /* eslint-disable no-await-in-loop */
       for (const [key, opts] of Object.entries(fieldMappings)) {
         const value = data[key];
-        if (value && opts.type === 'simple') {
+        if (value && opts.type === "simple") {
           await this.desk.setElementValue(opts.id, value);
         }
       }
       /* eslint-enable no-await-in-loop no-restricted-syntax */
       /* eslint-enable no-restricted-syntax  */
     } catch (e) {
-      throw new Error(`Falha ao tentar definir os campos da SA: ${e.message}`)
+      throw new Error(`Falha ao tentar definir os campos da SA: ${e.message}`);
     }
   }
-}
+};
 
 module.exports = {
   Ticket,
-  fieldMappings,
+  fieldMappings
 };
