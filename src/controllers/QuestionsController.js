@@ -44,34 +44,36 @@ QuestionsController.prototype = {
       message: "Qual SA você quer abrir agora?"
     });
   },
-  askForAnotherTicket() {
-    return inquirer.prompt({
-      name: 'anotherTicketQuestion',
-      type: 'list',
-      choices: [{
-          name: 'Yes',
-          value: true,
-        },
-        {
-          name: 'No',
-          value: false,
-        }
-      ],
-      message: 'Deseja adicionar mais uma SA?'
-    })
+  /**
+   * Convenient function for yes or no questions.
+   */
+  askYesNoQuestion(question, questionName = "yesNoQuestion") {
+    return inquirer
+      .prompt({
+        name: questionName,
+        type: "list",
+        choices: [
+          {
+            name: "Yes",
+            value: true
+          },
+          {
+            name: "No",
+            value: false
+          }
+        ],
+        message: question
+      })
+      .then(answer => answer[questionName]);
   },
   /**
-   * Based on a ticket type, prompt the user the questions for ticket information.
+   * Prompt the user wich ticket type to open.
    */
-  async askForTicketData(ticketType) {
-    const ticketSchema = this.ticketSchemas.find(
-      schema => schema.value === ticketType
-    ).schema;
-    return inquirer.prompt(new Form(ticketSchema).toInquirerPrompt());
-  }
-};
-
-module.exports = QuestionsController;
+  askForAnotherTicket() {
+    return this.askYesNoQuestion(
+      "Deseja adicionar mais uma SA?",
+      "anotherTicketQuestion"
+    );
   },
   /**
    * Based on a ticket type, prompt the user the questions for ticket information.
