@@ -1,0 +1,22 @@
+Boletins {
+  Exp
+  = (empresa)+
+  
+  empresa
+  = cabecalho lineTerminator resumo lineTerminator responsavel lineTerminator descricao
+  
+  lineTerminator
+  = "\n" | "\r" | "\u2028" | "\u2029"
+  
+  responsavel
+  = caseInsensitive<"Responsável = "> (~lineTerminator any)*
+  
+  resumo
+  = caseInsensitive<"resumo = "> (~lineTerminator any)*
+  
+  descricao
+  = caseInsensitive<"Descrição ="> lineTerminator (~empresa any)*
+  
+  cabecalho
+  = "EMPRESA" space (digit)* space "("letter*"):" lineTerminator (~lineTerminator any)*
+}

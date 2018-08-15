@@ -12,5 +12,7 @@ module.exports = {
     resolve(__dirname, "../nlp/semantics"),
   nlpGrammarsDir:
     process.env.SERVICE_DESK_GRAMMARS_DIR ||
-    resolve(__dirname, "../nlp/grammars")
+    resolve(__dirname, "../nlp/grammars"),
+  nlpSemanticsBoletinsFieldCategory:
+    process.env.SERVICE_DESK_SEMANTICS_BOLETINS_FIELD_CATEGORY || ""
 };
