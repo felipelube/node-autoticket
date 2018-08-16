@@ -97,9 +97,9 @@ const defineProgramAndParseArgs = () => {
 };
 
 (async () => {
-  defineProgramAndParseArgs();
-  const { csv, grammarProcessing } = program;
   try {
+    defineProgramAndParseArgs();
+    const { csv, grammarProcessing } = program;
     if (csv) {
       const ticketsToOpen = await doCSVProcessing();
       await mainWorkflow(ticketsToOpen);
