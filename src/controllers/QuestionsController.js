@@ -35,14 +35,14 @@ function QuestionsController() {
 QuestionsController.prototype = {
   constructor: QuestionsController,
   /**
-   * Prompt the user wich ticket type to open.
+   * Prompt the user which ticket type to open.
    */
   askForTicketType() {
     return inquirer.prompt({
       name: "ticketTypeQuestion",
       type: "list",
       choices: this.ticketSchemas,
-      message: __("Wich ticket type do you want to open now?")
+      message: __("Which ticket type do you want to open now?")
     });
   },
   /**
@@ -68,7 +68,7 @@ QuestionsController.prototype = {
       .then(answer => answer[questionName]);
   },
   /**
-   * Prompt the user wich ticket type to open.
+   * Prompt the user which ticket type to open.
    */
   askForAnotherTicket() {
     return this.askYesNoQuestion(

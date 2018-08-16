@@ -1,4 +1,5 @@
 const webdriver = require("selenium-webdriver");
+const { __ } = require("../controllers/TranslationController");
 
 const { By, until } = webdriver;
 const { Ticket } = require("./Ticket");
@@ -7,21 +8,20 @@ const { SERVICE_DESK_URL } = require("../config");
 const TIMEOUT = 10 * 1000;
 
 /**
- * Construtor para a 'classe' ServiceDesk
- * @param {Boolean} visible se a sessão deve ser criada num navegador visível
+ * ServiceDesk class constructor
+ * @param {Boolean} the browser to use, IE for visible sessions, phantomJS otherwise
  */
 function ServiceDesk(visible = true) {
-  this.visible = visible; // sessão num navegador vísivel para o usuário
-  this.loggedIn = false; // usuário está logado?
+  this.visible = visible;
+  this.loggedIn = false;
 
-  this.realUserName = ""; // nome completo do usuário
-  this.userName = ""; // login do usuário
+  this.realUserName = ""; // the complete name of the user
+  this.userName = "";
 
-  this.windowHandles = []; // janelas criadas nesta sessão
-  this.tickets = []; // tickets criados nesta sessão
+  this.windowHandles = []; // windows created in this instance (session)
+  this.tickets = [];
 
   if (this.visible) {
-    // se for visível, use o Internet Explorer
     this.driver = new webdriver.Builder()
       .withCapabilities({
         setEnableNativeEvents: false
@@ -29,39 +29,37 @@ function ServiceDesk(visible = true) {
       .forBrowser("ie")
       .build();
   } else {
-    // invisível, PhantomJS
     this.driver = new webdriver.Builder().forBrowser("phantomjs").build();
   }
 }
 
-/**
- * Protótipo para a classe ServiceDesk, definida na forma antiga.
- */
 ServiceDesk.prototype = {
-  constructor: ServiceDesk, // construtor acima
+  constructor: ServiceDesk,
 
   /**
-   * Termina a sessão com o navegador e destrói o driver.
+   * Finishes the session and destroys the driver object
    */
   async destroy() {
     await this.driver.quit();
     this.driver = null;
   },
   /**
-   * Função de conveniência para localizar e clicar num elemento de acordo com o localizador passado
-   * @param {any} locator o localizador do elemento
+   * Convenient function to locate and click on a element based on the locator param
+   * @param {By|Function} locator
    */
   async elementClick(locator) {
     try {
       const el = await this.driver.findElement(locator);
       await el.click();
     } catch (e) {
-      throw new Error(`Falha ao tentar clicar em elemento: ${e.message}`);
+      throw new Error(
+        __("Failed to locate and click on a element: %s", e.message)
+      );
     }
   },
   /**
-   * Espera um elemento ser defindo e renderizado na página para retorná-lo.
-   * @param {any} locator o localizador do elemento
+   * Awaits an element to be defined an rendered in the page to return it.
+   * @param {By|Function} locator
    */
   async getElementVisible(locator) {
     try {
@@ -72,13 +70,14 @@ ServiceDesk.prototype = {
       await this.driver.wait(until.elementIsVisible(whatElement), TIMEOUT);
       return whatElement;
     } catch (e) {
-      throw new Error(`Falha ao tentar pegar o elemento: ${e.message}`);
+      throw new Error(__("Failed to get an element: %s", e.message));
     }
   },
 
   /**
-   * Função de conveniência para navegar para um frame pelo atributo nome
-   * @param {any} locator o localizador do elemento
+   * Finds and navigates to a specified frame by its name
+   * @param {By|Function} locator
+   * @param {Boolean} awaitVisible awaits the frame become visible (render) to perform the navigation
    */
   async navigateToFrame(frameName, awaitVisible = true) {
     try {
@@ -90,94 +89,95 @@ ServiceDesk.prototype = {
         TIMEOUT
       );
     } catch (e) {
-      throw new Error(`Falha ao tentar navegar para o frame: ${frameName}`);
+      throw new Error(__("Failed to navigate to a frame: %s", frameName));
     }
   },
   /**
-   * Atualiza a lista interna de handles de janela criadas nesta seção
+   * Updates the internal list of window handles by getting this info from the underlying driver
    */
   async updateWindowHandles() {
     this.windowHandles = await this.driver.getAllWindowHandles();
   },
   /**
-   * Loga o usuário no CA Service Desk
-   * @todo validar dados de entrada, detectar condições de erro e usar melhor lógica que timeout
-   * para saber se a página carregou.
-   * @param {String} username nome de usuário
-   * @param {String} password senha
+   * Log in a user into CA Service Desk
+   * @todo validate the input data
+   * @todo detect error conditions
+   * @todo use better logic than a simple timeout to determine if the main page was loaded
+   * @param {String} username
+   * @param {String} password
    */
   async logIn(username, password) {
     try {
-      await this.driver.get(SERVICE_DESK_URL); // navegue até a URL do sistema
-      await this.driver.findElement(By.id("USERNAME")).sendKeys(username); // envie o nome de usuário
-      await this.driver.findElement(By.id("PIN")).sendKeys(password); // envie a senha
-      await this.elementClick(By.id("imgBtn0")); // clique no botão para entrar
+      await this.driver.get(SERVICE_DESK_URL); // go to the main URL
+      await this.driver.findElement(By.id("USERNAME")).sendKeys(username); // send username
+      await this.driver.findElement(By.id("PIN")).sendKeys(password); // send password
+      await this.elementClick(By.id("imgBtn0")); // click the log in button
 
       await this.navigateToFrame("welcome_banner");
       const welcomeBannerLink = await this.getElementVisible(
         By.css("td.welcome_banner_login_info > span.welcomebannerlink")
-      );
-      const userFullName = await welcomeBannerLink.getAttribute("title"); // extraia o nome completo do usuário
-      // atualize a lista de janelas com esta principal
-      await this.updateWindowHandles();
-      // atualize os atributos
+      ); // await the banner with user info become visible
+      const userFullName = await welcomeBannerLink.getAttribute("title"); // extract user info
+      await this.updateWindowHandles(); // update the internal windows list with this new window
+      /** update the internal user info */
       this.realUserName = userFullName;
       this.userName = username;
       this.loggedIn = true;
     } catch (e) {
-      throw new Error(`Falha ao tentar logar no sistema: ${e.message}`);
+      throw new Error(__("Failed to log in: %s", e.message));
     }
   },
   /**
-   * Cria uma janela de Solicitação de Atendimento
+   * Creates a ticket window
    */
   async createTicketWindow() {
     try {
-      await this.driver.switchTo().window(this.windowHandles[0]); // vá para a janela principal
-      await this.driver.switchTo().defaultContent(); // vá para o topo dos frames
+      await this.driver.switchTo().window(this.windowHandles[0]); // go to the main window
+      await this.driver.switchTo().defaultContent(); // go to the upper frame
 
-      await this.navigateToFrame("toolbar"); // vá para o frame toolbar
+      await this.navigateToFrame("toolbar"); // go to the toolbar frame
 
-      await this.elementClick(By.id("tabhref0")); // vá para a aba Service Desk
+      await this.elementClick(By.id("tabhref0")); // go to the 'Service Desk' tab
 
-      await this.driver.switchTo().defaultContent(); // volte ao topo dos frames
+      await this.driver.switchTo().defaultContent(); // go to the upper frame
 
-      // navegue até o frame da barra de menus
+      // go to the menu frame
       await this.navigateToFrame("product");
       await this.navigateToFrame("tab_2000");
       await this.navigateToFrame("menubar");
 
-      // pegue a quantidade de janelas antes de criar uma nova, para comparação
+      // get the actual number of windows for comparison later
       const handlesCount = this.windowHandles.length;
 
-      // clique no link de atalho para 'nova solicitação'
+      // click at the 'new ticket' shortcut
       await this.elementClick(By.id("toolbar_1"));
 
-      // aguarde a nova janela ser criada... @todo colocar timeout máximo
+      /** await the new window be visible @todo use a maximum timeout */
       /* eslint-disable no-await-in-loop */
       while (handlesCount === this.windowHandles.length) {
         await this.driver.sleep(100);
-        await this.updateWindowHandles(); // atualize a lista de janelas
+        await this.updateWindowHandles(); // update the internal windows list
       }
       /* eslint-enable no-await-in-loop */
 
-      // pegue o handle da janela de nova solicitação
+      // get the handle of the last window that we just created
       const newTicketWindowHandle = this.windowHandles[
         this.windowHandles.length - 1
       ];
+      // create a new Ticket object
       const newTicket = new Ticket(this, newTicketWindowHandle);
-      // insira o novo ticket na lista de tickets
+      // push it to the internal ticket list
       this.tickets.push(newTicket);
       return newTicket;
     } catch (e) {
       throw new Error(
-        `Falha ao tentar criar uma Janela de Solicitação: ${e.message}`
+        __("Failed to create a new ticket window: %s", e.message)
       );
     }
   },
   /**
-   * Dado o índice do ticket no vetor de tickets, navega para a janela associada a ele.
-   * @param {Number} ticketIndex o índice do ticket no vetor de tickets
+   * According to a ticket index, navigates to its window.
+   * @param {Number} ticketIndex
    */
   async navigateToTicket(ticketIndex = 0) {
     try {
@@ -185,28 +185,36 @@ ServiceDesk.prototype = {
       return this.tickets[ticketIndex];
     } catch (e) {
       throw new Error(
-        `Falha ao navegar para ticket com índice ${ticketIndex}: ${e.message}`
+        __("Failed to navigate to ticket %d: %s", ticketIndex, e.message)
       );
     }
   },
-
+  /**
+   * Sets the value of a input element
+   * @param {String} id
+   * @param {String} value
+   */
   async setElementValue(id, value) {
     try {
       const script = `document.getElementById('${id}').setAttribute('value', '${value}');`;
       await this.driver.wait(this.driver.executeScript(script), TIMEOUT);
     } catch (e) {
       throw new Error(
-        `Falha ao tentar definir o valor do elemento ${id}: ${e.message}`
+        __("Failed to set the value of the element %s: %s", id, e.message)
       );
     }
   },
+  /**
+   * Gets the value of a input element
+   * @param {By|Function} locator
+   */
   async getElementValue(locator) {
     try {
       const el = await this.getElementVisible(locator);
       return await el.getAttribute("value");
     } catch (e) {
       throw new Error(
-        `Falha ao tentar obter o valor do elemento: ${e.message}`
+        __("Failed to set the value of a element: %s", e.message)
       );
     }
   }

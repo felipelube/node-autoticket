@@ -1,4 +1,5 @@
 const formats = require("ajv/lib/compile/formats")();
+const { __ } = require("../controllers/TranslationController");
 
 function Form(schema, intro = "") {
   this.schema = schema;
@@ -10,7 +11,7 @@ function Form(schema, intro = "") {
  */
 const determineType = property => {
   if (typeof property.type !== "string") {
-    throw new Error("Compound types not supported yet.");
+    throw new Error(__("Compound types not supported yet."));
   } else {
     if (property.enum || property.type === "boolean") {
       return "list";
@@ -36,11 +37,11 @@ const propertyToQuestion = (propertyName, property, index, schema) => {
     if (property.type === "boolean") {
       question.choices = [
         {
-          name: "Yes",
+          name: __("Yes"),
           value: true
         },
         {
-          name: "No",
+          name: __("No"),
           value: false
         }
       ];
@@ -57,12 +58,12 @@ const propertyToQuestion = (propertyName, property, index, schema) => {
       if (Object.prototype.hasOwnProperty.call(formats, property.format)) {
         return formats[property.format].test(input);
       }
-      return true; // retorn true for all other cases
+      return true; // return true for all other cases
     };
     return question;
   } catch (e) {
     throw new Error(
-      `Cannot create a inquirer prompt object for question: ${e}`
+      __("Cannot create a inquirer prompt object for question: %s", e)
     );
   }
 };
@@ -70,7 +71,7 @@ const propertyToQuestion = (propertyName, property, index, schema) => {
 Form.prototype = {
   constructor: Form,
   /**
-   * Transform a JSON Schema for a ticket type into a Inquirer.js prompt session.
+   * Transform a JSON Schema for a ticket type into a Inquirer.js prompt object.
    */
   toInquirerPrompt() {
     return Object.entries(this.schema.properties).map(

@@ -1,0 +1,11 @@
+{
+	"Open a CSV file for batch processing": "Open a CSV file for batch processing",
+	"Parse the specified file using the built-in grammars": "Parse the specified file using the built-in grammars",
+	"Which ticket type do you want to open now?": "Which ticket type do you want to open now?",
+	"Loaded %d grammars: %s": "Loaded %d grammars: %s",
+	"Failed to parse the file using built-in NLP grammars: %s": "Failed to parse the file using built-in NLP grammars: %s",
+	"You are about to open %d tickets, do you wish to continue?": "You are about to open %d tickets, do you wish to continue?",
+	"Yes": "Yes",
+	"No": "No",
+	"Not implemented yet!": "Not implemented yet!"
+}

@@ -1,5 +1,7 @@
 const { By } = require("selenium-webdriver");
 
+const { __ } = require("../controllers/TranslationController");
+
 const fieldMappings = {
   requester: {
     id: "df_0_1",
@@ -58,9 +60,9 @@ const fieldMappings = {
 };
 
 function Ticket(desk, window) {
-  this.desk = desk; // ponteiro para a sessão que criou este ticket
-  this.window = window; // janela associada a este ticket
-  this.driver = this.desk.driver; // atalho para conveniência
+  this.desk = desk; // pointer for the ServiceDesk instance that created this ticket
+  this.window = window; // window associated to this ticket
+  this.driver = this.desk.driver;
   this.number = null;
 }
 
@@ -72,12 +74,12 @@ Ticket.prototype = {
       await this.driver.switchTo().window(this.window);
       await this.desk.navigateToFrame("cai_main");
     } catch (e) {
-      throw new Error(`Falha ao tentar ir para a janela da SA: ${e.message}`);
+      throw new Error(__("Failed to go to ticket window: %s"), e.message);
     }
   },
 
   /**
-   * Vai para a janela que está associada a este ticket e pega o número dele
+   * Gets the ticket number
    */
   async getNumber() {
     if (this.number) {
@@ -93,9 +95,13 @@ Ticket.prototype = {
       this.number = ticketNumber;
       return this.number;
     } catch (e) {
-      throw new Error(`Falha ao tentar pegar o número do Ticket: ${e.message}`);
+      throw new Error(__("Failed to get the ticket number: %s", e.message));
     }
   },
+  /**
+   * Sets the values in all fields currently supported using the fieldMappings dictionary
+   * @param {*} data the values of the fields
+   */
   async setAll(data) {
     try {
       await this.switchToSelfWindow();
@@ -104,13 +110,17 @@ Ticket.prototype = {
       for (const [key, opts] of Object.entries(fieldMappings)) {
         const value = data[key];
         if (value && opts.type === "simple") {
+          // currently, only simple values are supported
           await this.desk.setElementValue(opts.id, value);
         }
       }
       /* eslint-enable no-await-in-loop no-restricted-syntax */
       /* eslint-enable no-restricted-syntax  */
     } catch (e) {
-      throw new Error(`Falha ao tentar definir os campos da SA: ${e.message}`);
+      throw new Error(
+        __("Failed to set the ticket fields data: %s"),
+        e.message
+      );
     }
   }
 };

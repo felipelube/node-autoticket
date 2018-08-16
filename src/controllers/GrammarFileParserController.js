@@ -44,7 +44,7 @@ function GrammarFileParserController() {
   const grammarNames = this.grammarsWithSemantics.map(grammar => grammar.name);
   console.log(
     __(
-      "Loaded %s grammars: %s",
+      "Loaded %d grammars: %s",
       this.grammarsWithSemantics.length,
       grammarNames.join(", ")
     )
