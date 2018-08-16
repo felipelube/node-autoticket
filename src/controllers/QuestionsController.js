@@ -1,6 +1,7 @@
 const fs = require("fs-extra");
 const inquirer = require("inquirer");
 const { resolve } = require("path");
+const { __ } = require("./TranslationController");
 const Form = require("../classes/Form");
 const { ticketSchemasDir } = require("../config");
 
@@ -25,7 +26,7 @@ function QuestionsController() {
       });
       return ticketSchemas;
     } catch (e) {
-      throw new Error(`Failed to read the schemas: ${e}`);
+      throw new Error(__("Failed to read the schemas: %s", e));
     }
   };
   this.ticketSchemas = readTicketSchemas();
@@ -41,7 +42,7 @@ QuestionsController.prototype = {
       name: "ticketTypeQuestion",
       type: "list",
       choices: this.ticketSchemas,
-      message: "Qual SA você quer abrir agora?"
+      message: __("Wich ticket type do you want to open now?")
     });
   },
   /**
@@ -54,11 +55,11 @@ QuestionsController.prototype = {
         type: "list",
         choices: [
           {
-            name: "Yes",
+            name: __("Yes"),
             value: true
           },
           {
-            name: "No",
+            name: __("No"),
             value: false
           }
         ],
@@ -71,7 +72,7 @@ QuestionsController.prototype = {
    */
   askForAnotherTicket() {
     return this.askYesNoQuestion(
-      "Deseja adicionar mais uma SA?",
+      __("Do you want to add another ticket?"),
       "anotherTicketQuestion"
     );
   },

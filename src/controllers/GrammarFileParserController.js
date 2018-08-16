@@ -1,6 +1,7 @@
 const ohm = require("ohm-js");
 const fs = require("fs-extra");
 const { resolve } = require("path");
+const { __ } = require("./TranslationController");
 
 const { nlpSemanticsDir, nlpGrammarsDir } = require("../config");
 
@@ -33,18 +34,20 @@ function GrammarFileParserController() {
         return grammars;
       }, []);
     } catch (e) {
-      throw new Error(`Failed to read the grammars: ${e}`);
+      throw new Error(__("Failed to read the grammars: %s", e));
     }
   };
   this.grammarsWithSemantics = readGrammars();
   if (!this.grammarsWithSemantics || !this.grammarsWithSemantics.length > 0) {
-    throw new Error("No grammars were found");
+    throw new Error(__("No grammars were found"));
   }
   const grammarNames = this.grammarsWithSemantics.map(grammar => grammar.name);
   console.log(
-    `Loaded ${this.grammarsWithSemantics.length} grammars: ${grammarNames.join(
-      ", "
-    )}`
+    __(
+      "Loaded %s grammars: %s",
+      this.grammarsWithSemantics.length,
+      grammarNames.join(", ")
+    )
   );
 }
 
@@ -53,10 +56,10 @@ GrammarFileParserController.prototype = {
   parse(fileName) {
     try {
       if (!fileName) {
-        throw new Error("You must specify a file for processing");
+        throw new Error(__("You must specify a file for processing"));
       }
       if (!fs.exists(fileName)) {
-        throw new Error(`The file specified was not found: ${fileName}`);
+        throw new Error(__("The file specified was not found: %s", fileName));
       }
       const fileContents = fs.readFileSync(fileName);
       const matchedByGrammars = this.grammarsWithSemantics.reduce(
@@ -71,19 +74,25 @@ GrammarFileParserController.prototype = {
       );
       if (!matchedByGrammars.length) {
         throw new Error(
-          `No grammar matched this input. Tried ${
+          __(
+            "No grammar matched this input. Tried %d grammars.",
             this.grammarsWithSemantics.length
-          } grammars.`
+          )
         );
       } else if (matchedByGrammars.length > 1) {
         console.log(
-          "WARNING: more than one grammar was successfully matched for this input. Using only the first"
+          __(
+            "WARNING: more than one grammar was successfully matched for this input. Using only the first"
+          )
         );
       }
       return matchedByGrammars[0];
     } catch (e) {
       throw new Error(
-        `Failed to parse the file using built-in NLP grammars: ${e.message}`
+        __(
+          "Failed to parse the file using built-in NLP grammars: %s",
+          e.message
+        )
       );
     }
   }

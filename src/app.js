@@ -3,12 +3,12 @@ require("dotenv").config(); // load the env vars from .envfile
 const program = require("commander");
 const QuestionsController = require("./controllers/QuestionsController");
 const GrammarFileParserController = require("./controllers/GrammarFileParserController");
-
+const { __ } = require("./controllers/TranslationController");
 /**
  * Parse a CSV file to extract the tickets to open.
  */
 const doCSVProcessing = async () => {
-  throw new Error("Not implemented yet!");
+  throw new Error(__("Not implemented yet!"));
 };
 
 /**
@@ -20,18 +20,21 @@ const showTicketsSummary = async (data, doneProcessing = false) => {
   if (!doneProcessing) {
     const questionsController = new QuestionsController();
     const canOpenTicket = await questionsController.askYesNoQuestion(
-      `You are about to open ${data.length} tickets, do you wish to continue?`
+      __(
+        "You are about to open %d tickets, do you wish to continue?",
+        data.length
+      )
     );
     return canOpenTicket;
   }
-  throw new Error("Not implemented yet!");
+  throw new Error(__("Not implemented yet!"));
 };
 
 /**
  * Create a new instance of the Service Desk and open the tickets.
  */
 const openTickets = async () => {
-  throw new Error("Not implemented yet!");
+  throw new Error(__("Not implemented yet!"));
 };
 
 /**
@@ -46,7 +49,7 @@ const mainWorkflow = async ticketsToOpen => {
   await showTicketsSummary(ticketsToOpen);
   const results = await openTickets(ticketsToOpen);
   await showTicketsSummary(results, true);
-  throw new Error("Not implemented yet!");
+  throw new Error(__("Not implemented yet!"));
 };
 
 /**
@@ -82,19 +85,20 @@ const getTicketsFromFileUsingNLPProcessing = async fileName => {
   return ticketsToOpen;
 };
 
-/**
- * @todo more thread-safe use of the driver
- */
-program
-  .version("1.0.0")
-  .option("-C, --csv", "Open a CSV file for batch processing")
-  .option(
-    "-G, --grammar-processing [file]",
-    "Parse the specified file using the built-in grammars"
-  )
-  .parse(process.argv);
+const defineProgramAndParseArgs = () => {
+  program
+    .version("1.0.0")
+    .option("-C, --csv", __("Open a CSV file for batch processing"))
+    .option(
+      "-G, --grammar-processing [file]",
+      __("Parse the specified file using the built-in grammars")
+    )
+    .parse(process.argv);
+};
 
-(async ({ csv, grammarProcessing }) => {
+(async () => {
+  defineProgramAndParseArgs();
+  const { csv, grammarProcessing } = program;
   try {
     if (csv) {
       const ticketsToOpen = await doCSVProcessing();
@@ -111,4 +115,4 @@ program
   } catch (e) {
     console.error(e.message);
   }
-})(program);
+})();
