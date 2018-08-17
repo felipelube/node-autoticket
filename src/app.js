@@ -46,10 +46,11 @@ const openTickets = async () => {
  * @param {array} ticketsToOpen
  */
 const mainWorkflow = async ticketsToOpen => {
-  await showTicketsSummary(ticketsToOpen);
-  const results = await openTickets(ticketsToOpen);
-  await showTicketsSummary(results, true);
-  throw new Error(__("Not implemented yet!"));
+  const canOpenTicket = await showTicketsSummary(ticketsToOpen);
+  if (canOpenTicket) {
+    const results = await openTickets(ticketsToOpen);
+    await showTicketsSummary(results, true);
+  }
 };
 
 /**
