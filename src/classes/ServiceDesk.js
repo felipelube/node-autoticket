@@ -24,7 +24,12 @@ function ServiceDesk(visible = true) {
   if (this.visible) {
     this.driver = new webdriver.Builder()
       .withCapabilities({
-        setEnableNativeEvents: false
+        unexpectedAlertBehaviour: "accept",
+        enablePersistentHover: true,
+        ignoreZoomSetting: true,
+        acceptSslCerts: true,
+        ignoreProtectedModeSettings: true,
+        ensureCleanSession: true
       })
       .forBrowser("ie")
       .build();
