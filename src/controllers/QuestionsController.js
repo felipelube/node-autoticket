@@ -67,6 +67,29 @@ QuestionsController.prototype = {
       })
       .then(answer => answer[questionName]);
   },
+  askYesNoCancelQuestion(question, questionName = "yesNoCancelQuestion") {
+    return inquirer
+      .prompt({
+        name: questionName,
+        type: "list",
+        choices: [
+          {
+            name: __("Yes"),
+            value: "yes"
+          },
+          {
+            name: __("No"),
+            value: "no"
+          },
+          {
+            name: __("Cancel"),
+            value: false,
+          }
+        ],
+        message: question
+      })
+      .then(answer => answer[questionName]);
+  },
   /**
    * Prompt the user which ticket type to open.
    */
@@ -75,6 +98,12 @@ QuestionsController.prototype = {
       __("Do you want to add another ticket?"),
       "anotherTicketQuestion"
     );
+  },
+  askForNextTicket() {
+    return this.askYesNoCancelQuestion(
+      __("Proceed to the next ticket?"),
+      "askForNextTicketQuestion"
+    )
   },
   /**
    * Based on a ticket type, prompt the user the questions for ticket information.
