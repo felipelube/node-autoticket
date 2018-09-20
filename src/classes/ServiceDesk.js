@@ -202,7 +202,21 @@ ServiceDesk.prototype = {
    */
   async setElementValue(id, value) {
     try {
-      const script = `document.getElementById('${id}').setAttribute('value', '${value}');`;
+      const fieldValue = value.split("\n").join(" "); // replace line breaks with spaces
+      const script = `document.getElementById('${id}').setAttribute('value', '${fieldValue}');`;
+      await this.driver.wait(this.driver.executeScript(script), TIMEOUT);
+    } catch (e) {
+      throw new Error(
+        __("Failed to set the value of the element %s: %s", id, e.message)
+      );
+    }
+  },
+
+  async setElementInnerHTMLValue(id, value) {
+    try {
+      const script = `document.getElementById('${id}').innerHTML = '${JSON.stringify(
+        value
+      )}';`;
       await this.driver.wait(this.driver.executeScript(script), TIMEOUT);
     } catch (e) {
       throw new Error(
