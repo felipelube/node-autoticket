@@ -7,5 +7,17 @@
 	"You are about to open %d tickets, do you wish to continue?": "You are about to open %d tickets, do you wish to continue?",
 	"Yes": "Yes",
 	"No": "No",
-	"Not implemented yet!": "Not implemented yet!"
+	"Not implemented yet!": "Not implemented yet!",
+	"Do you want to add another ticket?": "Do you want to add another ticket?",
+	"You need to log-in into CA Service Desk Manager:": "You need to log-in into CA Service Desk Manager:",
+	"Username:": "Username:",
+	"Password:": "Password:",
+	"Failed to open tickets!": "Failed to open tickets!",
+	"Failed to open tickets! %s": "Failed to open tickets! %s",
+	"Failed to get an element: %s": "Failed to get an element: %s",
+	"Failed to navigate to a frame: %s": "Failed to navigate to a frame: %s",
+	"Failed to log in: %s": "Failed to log in: %s",
+	"Failed to go to ticket window: %s": "Failed to go to ticket window: %s",
+	"Failed to set the ticket fields data: %s": "Failed to set the ticket fields data: %s",
+	"Failed to get the ticket number: %s": "Failed to get the ticket number: %s"
 }
