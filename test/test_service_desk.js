@@ -1,6 +1,5 @@
 require("dotenv").config();
 const assert = require("assert");
-const { describe, it, before, after } = require("mocha");
 const { By } = require("selenium-webdriver");
 const { ServiceDesk } = require("../src/classes/ServiceDesk");
 const { fieldMappings } = require("../src/classes/Ticket");
