@@ -84,6 +84,26 @@ QuestionsController.prototype = {
       schema => schema.value === ticketType
     ).schema;
     return inquirer.prompt(new Form(ticketSchema).toInquirerPrompt());
+  },
+  /**
+   *
+   */
+  async askForUserCredentials() {
+    const { username } = await inquirer.prompt({
+      name: "username",
+      type: "input",
+      message: __("username:")
+    });
+    const { password } = await inquirer.prompt({
+      name: "password",
+      type: "password",
+      message: __("Password:")
+    });
+
+    return {
+      username,
+      password
+    };
   }
 };
 
