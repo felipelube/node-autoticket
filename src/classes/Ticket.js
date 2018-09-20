@@ -49,7 +49,7 @@ const fieldMappings = {
     id: "df_6_0",
     name: null,
     title: null,
-    type: "simple"
+    type: "textarea"
   },
   tenant: {
     id: "df_0_0",
@@ -109,9 +109,12 @@ Ticket.prototype = {
       /* eslint-disable no-await-in-loop */
       for (const [key, opts] of Object.entries(fieldMappings)) {
         const value = data[key];
-        if (value && opts.type === "simple") {
-          // currently, only simple values are supported
-          await this.desk.setElementValue(opts.id, value);
+        if (value && (opts.type === "simple" || opts.type === "textarea")) {
+          if (opts.type === "simple") {
+            await this.desk.setElementValue(opts.id, value);
+          } else {
+            await this.desk.setElementInnerHTMLValue(opts.id, value);
+          }
         }
       }
       /* eslint-enable no-await-in-loop no-restricted-syntax */
