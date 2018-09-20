@@ -50,12 +50,13 @@ ServiceDesk.prototype = {
   },
   /**
    * Convenient function to locate and click on a element based on the locator param
+   * Uses javascript to click a element.
    * @param {By|Function} locator
    */
   async elementClick(locator) {
     try {
       const el = await this.driver.findElement(locator);
-      await el.click();
+      await this.driver.executeScript("arguments[0].click();", el);
     } catch (e) {
       throw new Error(
         __("Failed to locate and click on a element: %s", e.message)
@@ -156,7 +157,7 @@ ServiceDesk.prototype = {
       const handlesCount = this.windowHandles.length;
 
       // click at the 'new ticket' shortcut
-      await this.elementClick(By.id("toolbar_1"));
+      await this.elementClick(By.id("toolbar_1"));      
 
       /** await the new window be visible @todo use a maximum timeout */
       /* eslint-disable no-await-in-loop */
@@ -170,6 +171,8 @@ ServiceDesk.prototype = {
       const newTicketWindowHandle = this.windowHandles[
         this.windowHandles.length - 1
       ];
+      await this.driver.switchTo().window(newTicketWindowHandle);
+      await this.driver.wait(until.titleContains("Criar solicitação"));
       // create a new Ticket object
       const newTicket = new Ticket(this, newTicketWindowHandle);
       // push it to the internal ticket list
