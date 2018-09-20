@@ -1,7 +1,7 @@
 const webdriver = require("selenium-webdriver");
 const { __ } = require("../controllers/TranslationController");
 
-const { By, until } = webdriver;
+const { By, Key, until } = webdriver;
 const { Ticket } = require("./Ticket");
 const { SERVICE_DESK_URL } = require("../config");
 
@@ -110,8 +110,9 @@ ServiceDesk.prototype = {
     try {
       await this.driver.get(SERVICE_DESK_URL); // go to the main URL
       await this.driver.findElement(By.id("USERNAME")).sendKeys(username); // send username
-      await this.driver.findElement(By.id("PIN")).sendKeys(password); // send password
-      await this.elementClick(By.id("imgBtn0")); // click the log in button
+      await this.driver.findElement(By.id("PIN")).sendKeys(password, Key.ENTER); // send password and ENTER
+
+      await this.driver.wait(until.titleContains("Anúncios"));
 
       await this.navigateToFrame("welcome_banner");
       const welcomeBannerLink = await this.getElementVisible(
