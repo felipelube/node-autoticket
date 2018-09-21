@@ -39,6 +39,19 @@ describe("Basic features with visible browser", () => {
     );
   });
 
+  it("should log out", async () => {
+    if (!desk.loggedIn) {
+      await desk.logIn(username, password);
+    }
+    await desk.logOut();
+    assert(
+      desk.loggedIn === false &&
+      desk.realUserName === "" &&
+      desk.userName === "",
+      "ServiceDesk: got user login that does not match with the used to log in"
+    );
+  });
+
   it("should create a new ticket order", async () => {
     if (!desk.loggedIn) {
       await desk.logIn(username, password);

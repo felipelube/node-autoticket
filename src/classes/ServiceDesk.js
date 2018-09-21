@@ -124,7 +124,7 @@ ServiceDesk.prototype = {
    */
   async logIn(username, password) {
     try {
-      await this.driver.get(SERVICE_DESK_URL); // go to the main URL
+        await this.driver.get(SERVICE_DESK_URL); // go to the main URL
       await this.driver.findElement(By.id("USERNAME")).sendKeys(username); // send username
       await this.driver.findElement(By.id("PIN")).sendKeys(password, Key.ENTER); // send password and ENTER
 
@@ -142,6 +142,27 @@ ServiceDesk.prototype = {
       this.loggedIn = true;
     } catch (e) {
       throw new Error(__("Failed to log in: %s", e.message));
+    }
+  },
+  /**
+   * Log out a user from the CA Service Desk
+   * @param {String} username
+   * @param {String} password
+   */
+  async logOut() {
+    try {
+      if (!this.loggedIn) {
+        throw new Error("Not logged in.")
+      }
+      await this.driver.switchTo().window(this.windowHandles[0]); // go to the main window
+      await this.driver.switchTo().defaultContent(); // go to the upper frame
+      await this.driver.executeScript("logout_all_windows(1);");
+      await this.driver.wait(until.titleContains("Logon"), TIMEOUT);
+      this.realUserName = "";
+      this.userName = "";
+      this.loggedIn = false;
+    } catch (e) {
+      throw new Error(__("Failed to log oyt: %s", e.message));
     }
   },
   /**
