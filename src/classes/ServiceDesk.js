@@ -1,9 +1,19 @@
 const webdriver = require("selenium-webdriver");
-const { __ } = require("../controllers/TranslationController");
+const {
+  __
+} = require("../controllers/TranslationController");
 
-const { By, Key, until } = webdriver;
-const { Ticket } = require("./Ticket");
-const { SERVICE_DESK_URL } = require("../config");
+const {
+  By,
+  Key,
+  until
+} = webdriver;
+const {
+  Ticket
+} = require("./Ticket");
+const {
+  SERVICE_DESK_URL
+} = require("../config");
 
 const TIMEOUT = 10 * 1000;
 
@@ -157,7 +167,7 @@ ServiceDesk.prototype = {
       const handlesCount = this.windowHandles.length;
 
       // click at the 'new ticket' shortcut
-      await this.elementClick(By.id("toolbar_1"));      
+      await this.elementClick(By.id("toolbar_1"));
 
       /** await the new window be visible */
       /* eslint-disable no-await-in-loop */
@@ -173,7 +183,8 @@ ServiceDesk.prototype = {
         this.windowHandles.length - 1
       ];
       await this.driver.switchTo().window(newTicketWindowHandle);
-      await this.driver.wait(until.titleContains("Criar solicitação"));
+      await this.navigateToFrame("cai_main");
+      await this.getElementVisible(By.id("df_6_0"));
       // create a new Ticket object
       const newTicket = new Ticket(this, newTicketWindowHandle);
       // push it to the internal ticket list
@@ -206,7 +217,7 @@ ServiceDesk.prototype = {
    */
   async setElementValue(id, value) {
     try {
-      const fieldValue = value.split("\n").join(" "); // replace line breaks with spaces
+      const fieldValue = value.split("\n").join("<br/> "); // replace line breaks with spaces
       const script = `document.getElementById('${id}').setAttribute('value', '${fieldValue}');`;
       await this.driver.wait(this.driver.executeScript(script), TIMEOUT);
     } catch (e) {
