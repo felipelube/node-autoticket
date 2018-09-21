@@ -159,11 +159,12 @@ ServiceDesk.prototype = {
       // click at the 'new ticket' shortcut
       await this.elementClick(By.id("toolbar_1"));      
 
-      /** await the new window be visible @todo use a maximum timeout */
+      /** await the new window be visible */
       /* eslint-disable no-await-in-loop */
+      const startTime = Date.now();
       while (handlesCount === this.windowHandles.length) {
-        await this.driver.sleep(100);
         await this.updateWindowHandles(); // update the internal windows list
+        if (Date.now() > (startTime + TIMEOUT)) throw new Error("Execution timeout");
       }
       /* eslint-enable no-await-in-loop */
 
