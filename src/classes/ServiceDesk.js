@@ -162,7 +162,7 @@ ServiceDesk.prototype = {
       this.userName = "";
       this.loggedIn = false;
     } catch (e) {
-      throw new Error(__("Failed to log oyt: %s", e.message));
+      throw new Error(__("Failed to log out: %s", e.message));
     }
   },
   /**

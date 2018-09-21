@@ -4,6 +4,7 @@ const { By } = require("selenium-webdriver");
 const { ServiceDesk } = require("../src/classes/ServiceDesk");
 const { fieldMappings } = require("../src/classes/Ticket");
 const { username, password } = require("../src/config");
+const assertThrowsAsync = require("assert-throws-async");
 
 const testDataForTicket = {
   requester: "John Doe",
@@ -50,6 +51,10 @@ describe("Basic features with visible browser", () => {
       desk.userName === "",
       "ServiceDesk: got user login that does not match with the used to log in"
     );
+  });
+
+  it("should throw a error when trying to logout not logged in", async () => {
+    assertThrowsAsync(desk.logOut);
   });
 
   it("should create a new ticket order", async () => {

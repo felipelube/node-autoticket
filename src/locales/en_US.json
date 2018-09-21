@@ -24,5 +24,6 @@
 	"Proceed to the next ticket?": "Proceed to the next ticket?",
 	"Cancel": "Cancel",
 	"username:": "username:",
-	"Please provide your CA Service Desk Manager credentials": "Please provide your CA Service Desk Manager credentials"
+	"Please provide your CA Service Desk Manager credentials": "Please provide your CA Service Desk Manager credentials",
+	"Failed to log out: %s": "Failed to log out: %s"
 }

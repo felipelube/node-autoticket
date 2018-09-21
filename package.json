@@ -23,6 +23,7 @@
     "selenium-webdriver": "^3.6.0"
   },
   "devDependencies": {
+    "assert-throws-async": "^3.0.0",
     "eslint": "4.19.1",
     "eslint-config-airbnb-base": "13.0.0",
     "eslint-config-prettier": "^2.9.0",
