@@ -19,5 +19,10 @@
 	"Failed to log in: %s": "Failed to log in: %s",
 	"Failed to go to ticket window: %s": "Failed to go to ticket window: %s",
 	"Failed to set the ticket fields data: %s": "Failed to set the ticket fields data: %s",
-	"Failed to get the ticket number: %s": "Failed to get the ticket number: %s"
+	"Failed to get the ticket number: %s": "Failed to get the ticket number: %s",
+	"Failed to create a new ticket window: %s": "Failed to create a new ticket window: %s",
+	"Proceed to the next ticket?": "Proceed to the next ticket?",
+	"Cancel": "Cancel",
+	"username:": "username:",
+	"Please provide your CA Service Desk Manager credentials": "Please provide your CA Service Desk Manager credentials"
 }
