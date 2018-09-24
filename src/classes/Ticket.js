@@ -127,7 +127,22 @@ Ticket.prototype = {
         e.message
       );
     }
-  }
+  },
+  /**
+   * Closes the ticket window.
+   */
+  async cancelForm() {
+    try {
+      await this.switchToSelfWindow();
+      await this.driver.close();
+    } catch (e) {
+      throw new Error(
+        __("Failed to cancel the form of the ticket %s: %s"),
+        this.ticketNumber || '',
+        e.message
+      );
+    }
+  },
 };
 
 module.exports = {
