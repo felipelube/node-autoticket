@@ -86,7 +86,8 @@ Ticket.prototype = {
     }
     try {
       await this.switchToSelfWindow();
-      const element = await this.desk.getElementVisible(
+      await this.desk.navigateToFrame(By.name("cai_main"));
+      const element = await this.driver.findElement(
         By.css("center > div > table > tbody > tr > td > h2")
       );
       const elementText = await element.getText();
