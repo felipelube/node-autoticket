@@ -1,10 +1,13 @@
 require("dotenv").config();
+const promise = require("selenium-webdriver/lib/promise");
 const assert = require("assert");
 const { By } = require("selenium-webdriver");
 const { ServiceDesk } = require("../src/classes/ServiceDesk");
 const { fieldMappings } = require("../src/classes/Ticket");
 const { username, password } = require("../src/config");
 const assertThrowsAsync = require("assert-throws-async");
+
+promise.USE_PROMISE_MANAGER = false; // Disable the WebDriverJS' promise manager
 
 const testDataForTicket = {
   requester: "John Doe",
