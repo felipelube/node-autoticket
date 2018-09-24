@@ -120,13 +120,13 @@ ServiceDesk.prototype = {
    */
   async logIn(username, password) {
     try {
-        await this.driver.get(SERVICE_DESK_URL); // go to the main URL
+      await this.driver.get(SERVICE_DESK_URL); // go to the main URL
       await this.driver.findElement(By.id("USERNAME")).sendKeys(username); // send username
       await this.driver.findElement(By.id("PIN")).sendKeys(password, Key.ENTER); // send password and ENTER
 
       await this.driver.wait(until.titleContains("Anúncios"));
 
-      await this.navigateToFrame("welcome_banner");
+      await this.navigateToFrame(By.name("welcome_banner"));
       const welcomeBannerLink = await this.getElementVisible(
         By.css("td.welcome_banner_login_info > span.welcomebannerlink")
       ); // await the banner with user info become visible
@@ -136,6 +136,7 @@ ServiceDesk.prototype = {
       this.realUserName = userFullName;
       this.userName = username;
       this.loggedIn = true;
+      this.mainWindowHandle = await this.driver.getWindowHandle();
     } catch (e) {
       throw new Error(__("Failed to log in: %s", e.message));
     }
