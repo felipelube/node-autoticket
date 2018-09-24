@@ -15,7 +15,6 @@ const {
   SERVICE_DESK_URL
 } = require("../config");
 
-const TIMEOUT = 10 * 1000;
 
 /**
  * ServiceDesk class constructor
@@ -80,11 +79,11 @@ ServiceDesk.prototype = {
    */
   async getElementVisible(locator) {
     try {
-      await this.driver.wait(until.elementLocated(locator), TIMEOUT);
+      await this.driver.wait(until.elementLocated(locator));
       const whatElement = await this.driver.wait(
         this.driver.findElement(locator)
       );
-      await this.driver.wait(until.elementIsVisible(whatElement), TIMEOUT);
+      await this.driver.wait(until.elementIsVisible(whatElement));
       return whatElement;
     } catch (e) {
       throw new Error(__("Failed to get an element: %s", e.message));
@@ -241,7 +240,7 @@ ServiceDesk.prototype = {
     try {
       const fieldValue = value.split("\n").join("<br/> "); // replace line breaks with spaces
       const script = `document.getElementById('${id}').setAttribute('value', '${fieldValue}');`;
-      await this.driver.wait(this.driver.executeScript(script), TIMEOUT);
+      await this.driver.wait(this.driver.executeScript(script));
     } catch (e) {
       throw new Error(
         __("Failed to set the value of the element %s: %s", id, e.message)
@@ -254,7 +253,7 @@ ServiceDesk.prototype = {
       const script = `document.getElementById('${id}').innerHTML = '${JSON.stringify(
         value
       )}';`;
-      await this.driver.wait(this.driver.executeScript(script), TIMEOUT);
+      await this.driver.wait(this.driver.executeScript(script));
     } catch (e) {
       throw new Error(
         __("Failed to set the value of the element %s: %s", id, e.message)
