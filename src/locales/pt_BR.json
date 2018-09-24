@@ -24,5 +24,9 @@
 	"You need to log-in into CA Service Desk Manager:": "You need to log-in into CA Service Desk Manager:",
 	"Username:": "Username:",
 	"Password:": "Password:",
-	"Failed to open tickets! %s": "Failed to open tickets! %s"
+	"Failed to open tickets! %s": "Failed to open tickets! %s",
+	"Please provide your CA Service Desk Manager credentials": "Please provide your CA Service Desk Manager credentials",
+	"Proceed to the next ticket?": "Proceed to the next ticket?",
+	"Cancel": "Cancel",
+	"Failed to cancel the form of the ticket %s: %s": "Failed to cancel the form of the ticket %s: %s"
 }
