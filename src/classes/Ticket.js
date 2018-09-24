@@ -105,11 +105,13 @@ Ticket.prototype = {
   async setAll(data) {
     try {
       await this.switchToSelfWindow();
+      await this.desk.navigateToFrame(By.name("cai_main"));
       /* eslint-disable no-restricted-syntax  */
       /* eslint-disable no-await-in-loop */
       for (const [key, opts] of Object.entries(fieldMappings)) {
         const value = data[key];
         if (value && (opts.type === "simple" || opts.type === "textarea")) {
+          await this.driver.findElement(By.id(opts.id));
           if (opts.type === "simple") {
             await this.desk.setElementValue(opts.id, value);
           } else {
