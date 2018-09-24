@@ -1,10 +1,14 @@
 require("dotenv").config(); // load the env vars from .envfile
 
 const program = require("commander");
+const promise = require("selenium-webdriver/lib/promise");
 const QuestionsController = require("./controllers/QuestionsController");
 const GrammarFileParserController = require("./controllers/GrammarFileParserController");
 const { ServiceDesk } = require("./classes/ServiceDesk");
 const { __ } = require("./controllers/TranslationController");
+
+promise.USE_PROMISE_MANAGER = false; // Disable the WebDriverJS' promise manager
+
 /**
  * Parse a CSV file to extract the tickets to open.
  */
@@ -35,13 +39,13 @@ const showTicketsSummary = async (data, doneProcessing = false) => {
  * Create a new instance of the Service Desk and open the tickets.
  */
 const openTickets = async tickets => {
-  try {    
+  try {
     const questionsController = new QuestionsController();
     console.log(__("Please provide your CA Service Desk Manager credentials"));
     const {username, password} = await questionsController.askForUserCredentials()
-    
+
     const desk = new ServiceDesk();
-    await desk.logIn(username, password);        
+    await desk.logIn(username, password);
     /* eslint-disable no-restricted-syntax */
     /* eslint-disable no-await-in-loop */
     for (const ticketData of tickets) {
@@ -54,9 +58,10 @@ const openTickets = async tickets => {
         throw new Error("Canceled by user");
       }
       /** @todo: destroy ticket window after save to economize resources */
-    } 
+    }
     /* eslint-enable no-await-in-loop no-restricted-syntax */
     /* eslint-enable no-restricted-syntax  */
+    /** @todo logout */
   } catch (e) {
     throw new Error(__("Failed to open tickets! %s", e.message));
   }
