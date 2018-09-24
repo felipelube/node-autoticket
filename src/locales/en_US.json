@@ -25,5 +25,9 @@
 	"Cancel": "Cancel",
 	"username:": "username:",
 	"Please provide your CA Service Desk Manager credentials": "Please provide your CA Service Desk Manager credentials",
-	"Failed to log out: %s": "Failed to log out: %s"
+	"Failed to log out: %s": "Failed to log out: %s",
+	"Failed to switch to main window: %s": "Failed to switch to main window: %s",
+	"Failed to cancel the form of the ticket %s: %s": "Failed to cancel the form of the ticket %s: %s",
+	"Timed out while awaiting to switch to frame %s": "Timed out while awaiting to switch to frame %s",
+	"Failed to navigate to a frame: %s (%s)": "Failed to navigate to a frame: %s (%s)"
 }
