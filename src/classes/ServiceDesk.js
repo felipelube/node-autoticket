@@ -29,6 +29,7 @@ function ServiceDesk(visible = true) {
   this.userName = "";
 
   this.windowHandles = []; // windows created in this instance (session)
+  this.mainWindowHandle = '';
   this.tickets = [];
 
   if (this.visible) {
@@ -271,6 +272,18 @@ ServiceDesk.prototype = {
     } catch (e) {
       throw new Error(
         __("Failed to set the value of a element: %s", e.message)
+      );
+    }
+  },
+  async switchToMainWindow() {
+    try {
+      if (!this.mainWindowHandle) {
+        throw new Error("Main window handle not defined.")
+      }
+      await this.driver.switchTo().window(this.mainWindowHandle); // go to the main window
+    } catch (e) {
+      throw new Error(
+        __("Failed to switch to main window: %s", e.message)
       );
     }
   }
