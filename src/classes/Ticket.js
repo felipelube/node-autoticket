@@ -72,7 +72,6 @@ Ticket.prototype = {
   async switchToSelfWindow() {
     try {
       await this.driver.switchTo().window(this.window);
-      await this.desk.navigateToFrame("cai_main");
     } catch (e) {
       throw new Error(__("Failed to go to ticket window: %s"), e.message);
     }
