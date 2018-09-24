@@ -170,21 +170,22 @@ ServiceDesk.prototype = {
    */
   async createTicketWindow() {
     try {
-      await this.driver.switchTo().window(this.windowHandles[0]); // go to the main window
+      await this.switchToMainWindow();
       await this.driver.switchTo().defaultContent(); // go to the upper frame
 
-      await this.navigateToFrame("toolbar"); // go to the toolbar frame
+      await this.navigateToFrame(By.name("toolbar")); // go to the toolbar frame
 
       await this.elementClick(By.id("tabhref0")); // go to the 'Service Desk' tab
 
       await this.driver.switchTo().defaultContent(); // go to the upper frame
 
       // go to the menu frame
-      await this.navigateToFrame("product");
-      await this.navigateToFrame("tab_2000");
-      await this.navigateToFrame("menubar");
+      await this.navigateToFrame(By.name("product"));
+      await this.navigateToFrame(By.name("tab_2000"));
+      await this.navigateToFrame(By.name("menubar"));
 
       // get the actual number of windows for comparison later
+      await this.updateWindowHandles();
       const handlesCount = this.windowHandles.length;
 
       // click at the 'new ticket' shortcut
@@ -195,7 +196,11 @@ ServiceDesk.prototype = {
       const startTime = Date.now();
       while (handlesCount === this.windowHandles.length) {
         await this.updateWindowHandles(); // update the internal windows list
-        if (Date.now() > (startTime + TIMEOUT)) throw new Error("Execution timeout");
+        if ("DEBUG" in process.env) {
+          await this.driver.sleep(200);
+        } else if ((startTime + Date.now) < Date.now()) {
+          throw new Error("Execution timeout");
+        }
       }
       /* eslint-enable no-await-in-loop */
 
@@ -204,8 +209,7 @@ ServiceDesk.prototype = {
         this.windowHandles.length - 1
       ];
       await this.driver.switchTo().window(newTicketWindowHandle);
-      await this.navigateToFrame("cai_main");
-      await this.getElementVisible(By.id("df_6_0"));
+      await this.navigateToFrame(3);
       // create a new Ticket object
       const newTicket = new Ticket(this, newTicketWindowHandle);
       // push it to the internal ticket list
