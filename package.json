@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 15000",
+    "test": "mocha --timeout 60000",
     "dev": "node src/app.js",
     "dev:folhas": "node src/app.js -G input-folhas.txt",
     "lint": "eslint --ext .js --ignore-path .gitignore ."
