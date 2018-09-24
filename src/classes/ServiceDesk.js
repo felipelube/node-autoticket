@@ -154,10 +154,9 @@ ServiceDesk.prototype = {
       if (!this.loggedIn) {
         throw new Error("Not logged in.")
       }
-      await this.driver.switchTo().window(this.windowHandles[0]); // go to the main window
+      await this.switchToMainWindow() // go to the main window
       await this.driver.switchTo().defaultContent(); // go to the upper frame
-      await this.driver.executeScript("logout_all_windows(1);");
-      await this.driver.wait(until.titleContains("Logon"), TIMEOUT);
+      await this.driver.close();
       this.realUserName = "";
       this.userName = "";
       this.loggedIn = false;
