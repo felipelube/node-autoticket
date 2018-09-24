@@ -95,17 +95,13 @@ ServiceDesk.prototype = {
    * @param {By|Function} locator
    * @param {Boolean} awaitVisible awaits the frame become visible (render) to perform the navigation
    */
-  async navigateToFrame(frameName, awaitVisible = true) {
+  async navigateToFrame(locator) {
     try {
-      if (awaitVisible) {
-        await this.getElementVisible(By.name(frameName));
-      }
       await this.driver.wait(
-        until.ableToSwitchToFrame(By.name(frameName)),
-        TIMEOUT
+        until.ableToSwitchToFrame(locator)
       );
     } catch (e) {
-      throw new Error(__("Failed to navigate to a frame: %s", frameName));
+      throw new Error(__("Failed to navigate to a frame: %s (%s)", locator.toString(), e.message));
     }
   },
   /**
