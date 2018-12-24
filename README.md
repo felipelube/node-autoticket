@@ -1,5 +1,7 @@
 # [WIP] Node-Autoticket
 
+**UPDATE (2018-12-24): This project was abandoned since my organization decided to migrate to another ticket management software.**
+
 This project is inspired by the excelent
 [AutoTicketProject](https://github.com/cmrfrd/AutoTicketProject) by [Alexander
 Comerford](https://github.com/cmrfrd) - this is, however, implemented in Javascript (Node 8.x).
